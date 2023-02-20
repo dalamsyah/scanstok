@@ -16,6 +16,7 @@ class DbHelper {
         sn TEXT,
         sn2 TEXT,
         scan INTEGER,
+        upload TEXT,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP
       )
@@ -76,17 +77,16 @@ class DbHelper {
 
   // Update an item by id
   static Future<int> updateItem(
-      int id, String title, String? descrption) async {
+      int scan, String snOrSn2) async {
     final db = await DbHelper.db();
 
     final data = {
-      'title': title,
-      'description': descrption,
-      'createdAt': DateTime.now().toString()
+      'scan': scan,
+      'updated_at': DateTime.now().toString()
     };
 
     final result =
-    await db.update('scanstock', data, where: "id = ?", whereArgs: [id]);
+    await db.update('scanstock', data, where: "sn = ?", whereArgs: [snOrSn2]);
     return result;
   }
 
