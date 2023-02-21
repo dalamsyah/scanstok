@@ -6,6 +6,7 @@ class ScanModel {
   String _sn = "";
   String _sn2 = "";
   int _scan = 0;
+  String _upload = "false";
   String _created_at = "";
   String _updated_at = "";
 
@@ -19,6 +20,9 @@ class ScanModel {
     this._sn = map['sn'];
     this._sn2 = map['sn2'];
     this._scan = map['scan'];
+    this._upload = map['upload'];
+    this._created_at = map['created_at'];
+    this._updated_at = map['updated_at'] ?? '-';
   }
   //getter dan setter (mengambil dan mengisi data kedalam object)
   // getter
@@ -26,6 +30,8 @@ class ScanModel {
   String get sn => _sn;
   String get sn2 => _sn2;
   int get scan => _scan;
+  String get created_at => _created_at;
+  String get updated_at => _updated_at;
 
   // setter
   set sn(String value) {
@@ -36,6 +42,14 @@ class ScanModel {
     sn2 = value;
   }
 
+  set created_at(String value) {
+    created_at = value;
+  }
+
+  set updated_at(String value) {
+    updated_at = value;
+  }
+
   // konversi dari Scan ke Map
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = Map<String, dynamic>();
@@ -44,6 +58,9 @@ class ScanModel {
     map['sn'] = _sn;
     map['sn2'] = _sn2;
     map['scan'] = _scan;
+    map['upload'] = _upload;
+    map['created_at'] = _created_at;
+    map['updated_at'] = _updated_at;
     return map;
   }
 

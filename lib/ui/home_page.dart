@@ -18,6 +18,7 @@ class _HomePage extends State<HomePage> {
 
   final _scanService = ScanService();
   final TextEditingController _controllerSearch = TextEditingController();
+  final TextEditingController _controllerScanManual = TextEditingController();
   int count = 0;
   List<ScanModel> scanList = [];
 
@@ -48,29 +49,40 @@ class _HomePage extends State<HomePage> {
   // }
 
   ListView createListView() {
+
     return ListView.builder(
       itemCount: scanList.length,
       itemBuilder: (BuildContext context, int index) {
+
+        var color = Container(
+          width: 5,
+          height: 50,
+          color: Colors.white,
+        );
+        if (scanList[index].scan > 1) {
+          color = Container(
+            width: 5,
+            height: 50,
+            color: Colors.green,
+          );
+        }
+
         return Card(
           color: Colors.white,
           elevation: 2.0,
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.red,
-              child: Icon(Icons.people),
-            ),
-            title: Text(this.scanList[index].sn ),
-            subtitle: Text(this.scanList[index].sn2),
-            trailing: GestureDetector(
-              child: Icon(Icons.delete),
-              onTap: () {
-              //   deleteScan(scanList[index]);
-              },
-            ),
-            onTap: () async {
-              // var contact = await navigateToEntryForm(context, this.scanList[index]);
-              // if (contact != null) editContact(contact);
-            },
+          child: Row(
+            children: [
+              color,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(this.scanList[index].sn ),
+                  Text(this.scanList[index].sn2),
+                  Text('Scan ${this.scanList[index].scan}'),
+                  Text(this.scanList[index].updated_at),
+                ],
+              )
+            ],
           ),
         );
       },
@@ -99,6 +111,38 @@ class _HomePage extends State<HomePage> {
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(18.0)),
                   ),
                 ),
+              ),
+
+              Row(
+                children: [
+                  Expanded(child:
+                    Container(
+                      padding: EdgeInsets.only(left: 20),
+                      child: GFTextField(
+                        controller: _controllerScanManual,
+                        keyboardType: TextInputType.text,
+                        onChanged: (String value){
+
+                        },
+                        autofocus: false,
+                        decoration: InputDecoration(
+                          hintText: 'Scan manual',
+                          contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18.0)),
+                        ),
+                      ),
+                    )
+                  ),
+                  TextButton(onPressed: (){
+                    DbHelper.updateItem(2, _controllerScanManual.text.toString()).then((int value) {
+                      if (value > 0) {
+                        _refreshData('');
+                      }
+                      debugPrint('update -> $value');
+                    });
+
+                  }, child: Text('Scan')),
+                ],
               ),
 
               TextButton(onPressed: () async {
