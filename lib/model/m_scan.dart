@@ -20,8 +20,8 @@ class ScanModel {
     this._sn = map['sn'];
     this._sn2 = map['sn2'];
     this._scan = map['scan'];
-    this._upload = map['upload'];
-    this._created_at = map['created_at'];
+    this._upload = map['upload'] ?? 'false';
+    this._created_at = map['created_at'] ?? '-';
     this._updated_at = map['updated_at'] ?? '-';
   }
   //getter dan setter (mengambil dan mengisi data kedalam object)

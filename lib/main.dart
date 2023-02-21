@@ -1,18 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:scanstock/ui/barcode_scanner.dart';
 import 'package:scanstock/ui/home_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  static String tag = 'my-app';
+  @override
+  State<StatefulWidget> createState() => _MyApp();
+}
+
+class _MyApp extends State<MyApp> {
+
+  bool _iSearch = false;
+  final TextEditingController _controllerSearch = TextEditingController();
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    Widget _search = Container(
+      child: TextField(
+        controller: _controllerSearch,
+        keyboardType: TextInputType.text,
+        // style: TextStyle(fontSize: 22.0, color: Color(0xffffffff)),
+        onChanged: (String value){
+
+        },
+        autofocus: false,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          hintText: 'Search...',
+          contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18.0)),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(18.0),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(18.0),
+          ),
+        ),
+      ),
+    );
+
+
+
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -26,7 +64,31 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: _iSearch ? _search : Text('Scan Stock'),
+          actions: [
+            // Navigate to the Search Screen
+            !_iSearch ?
+            IconButton(
+                onPressed: (() {
+                  setState(() {
+                    _iSearch = !_iSearch;
+                  });
+                }),
+                icon: const Icon(Icons.search)) :
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    _iSearch = !_iSearch;
+                    _controllerSearch.text = '';
+                  });
+                },
+                icon: const Icon(Icons.cancel))
+          ]
+        ),
+        body: HomePage(),
+      ),
     );
   }
 }

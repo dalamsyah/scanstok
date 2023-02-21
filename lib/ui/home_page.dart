@@ -11,7 +11,6 @@ class HomePage extends StatefulWidget {
   static String tag = 'home-page';
   @override
   State<StatefulWidget> createState() => _HomePage();
-
 }
 
 class _HomePage extends State<HomePage> {
@@ -72,15 +71,17 @@ class _HomePage extends State<HomePage> {
           elevation: 2.0,
           child: Row(
             children: [
-              color,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(this.scanList[index].sn ),
-                  Text(this.scanList[index].sn2),
-                  Text('Scan ${this.scanList[index].scan}'),
-                  Text(this.scanList[index].updated_at),
-                ],
+              Container(
+                padding: EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("SN: "+this.scanList[index].sn ),
+                    Text("SN2: "+this.scanList[index].sn2),
+                    Text(""),
+                    Text(this.scanList[index].updated_at),
+                  ],
+                ),
               )
             ],
           ),
@@ -154,20 +155,59 @@ class _HomePage extends State<HomePage> {
               }, child: Text('Open Scanner')),
 
               TextButton(onPressed: (){
+                showLoaderDialog(context);
                 _scanService.getScanList().then((value) {
+
+                  Navigator.pop(context);
                   _refreshData('');
+                }).onError((error, stackTrace) {
+                  Navigator.pop(context);
+                  const snackBar = SnackBar(
+                    content: Text('Failed get data.'),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 });
               }, child: Text('Get Data')),
 
               Expanded(
                   child:
-                  createListView(),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: scanList.isEmpty ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('No data.')
+                      ],
+                    ) : createListView(),
+                  ),
               ),
             ],
           ),
         )
     );
 
+  }
+
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert = AlertDialog(
+      content: Row(
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(
+            width: 10,
+          ),
+          Container(
+            child:Text(" Loading..." ),
+            padding: EdgeInsets.all(10),
+          ),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
+    );
   }
 
   Widget widgetListDocument(int index) {

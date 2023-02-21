@@ -16,7 +16,8 @@ class ScanService {
 
     SharedPreferences localStorage = await SharedPreferences.getInstance();
 
-    final response = await http.get(Uri.parse('http://192.168.56.1/scan_barcode_stok_api/public/scan'));
+    // final response = await http.get(Uri.parse('http://192.168.56.1/scan_barcode_stok_api/public/scan'));
+    final response = await http.get(Uri.parse('http://172.20.10.11/scan_barcode_stok_api/public/scan'));
 
     if (response.statusCode == 200) {
 
@@ -25,6 +26,7 @@ class ScanService {
 
       listScan = list.map((data) => ScanModel.fromMap(data) ).toList();
 
+      DbHelper.delete();
       listScan.forEach((element) {
         DbHelper.createItem(element);
       });

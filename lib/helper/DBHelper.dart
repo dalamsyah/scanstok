@@ -100,6 +100,15 @@ class DbHelper {
     }
   }
 
+  static Future<void> delete() async {
+    final db = await DbHelper.db();
+    try {
+      await db.delete("scanstock");
+    } catch (err) {
+      debugPrint("Something went wrong when deleting all item");
+    }
+  }
+
 //   static DbHelper _dbHelper;
 //   static late Database _database;
 //
