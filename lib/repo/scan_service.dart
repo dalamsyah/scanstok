@@ -7,6 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanService {
 
+  String url = 'http://192.168.56.1/scan_barcode_stok_api/public/scan';
+  // String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
+
+
   List<ScanModel> listScan = [];
   bool isLoading = false;
 
@@ -16,8 +20,7 @@ class ScanService {
 
     SharedPreferences localStorage = await SharedPreferences.getInstance();
 
-    // final response = await http.get(Uri.parse('http://192.168.56.1/scan_barcode_stok_api/public/scan'));
-    final response = await http.get(Uri.parse('http://172.20.10.11/scan_barcode_stok_api/public/scan'));
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
 
@@ -39,6 +42,19 @@ class ScanService {
       throw Exception('Failed to get list scan.');
     }
 
+  }
+
+  Future<String> postList(List<ScanModel> list) async {
+    final response = await http.post(Uri.parse(url), body: {
+      'list': jsonEncode(list),
+    });
+
+    if (response.statusCode == 200) {
+
+      return 'Success send data';
+    } else {
+      throw Exception('Failed to get status list.');
+    }
   }
 
 }

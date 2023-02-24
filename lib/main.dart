@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scanstock/helper/DBHelper.dart';
+import 'package:scanstock/model/m_scan.dart';
 import 'package:scanstock/ui/home_page.dart';
 
 void main() {
@@ -15,6 +17,21 @@ class _MyApp extends State<MyApp> {
 
   bool _iSearch = false;
   final TextEditingController _controllerSearch = TextEditingController();
+  List<ScanModel> scanList = [];
+
+  void _refreshData(String key) async {
+    final data = await DbHelper.getList(key);
+    setState(() {
+      scanList = data;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _refreshData('');
+  }
 
   // This widget is the root of your application.
   @override
@@ -26,7 +43,7 @@ class _MyApp extends State<MyApp> {
         keyboardType: TextInputType.text,
         // style: TextStyle(fontSize: 22.0, color: Color(0xffffffff)),
         onChanged: (String value){
-
+          _refreshData(value);
         },
         autofocus: false,
         decoration: InputDecoration(
@@ -87,7 +104,7 @@ class _MyApp extends State<MyApp> {
                 icon: const Icon(Icons.cancel))
           ]
         ),
-        body: HomePage(),
+        body: HomePage(scanList: scanList),
       ),
     );
   }

@@ -9,6 +9,10 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
+  final List<ScanModel> scanList;
+
+  HomePage({ Key? key, required this.scanList}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _HomePage();
 }
@@ -19,20 +23,13 @@ class _HomePage extends State<HomePage> {
   final TextEditingController _controllerSearch = TextEditingController();
   final TextEditingController _controllerScanManual = TextEditingController();
   int count = 0;
-  List<ScanModel> scanList = [];
 
   @override
   void initState() {
     super.initState();
-    _refreshData('');
   }
 
-  void _refreshData(String key) async {
-    final data = await DbHelper.getList(key);
-    setState(() {
-      scanList = data;
-    });
-  }
+
 
   // void updateListView() {
   //   final Future<Database> dbFuture = dbHelper.initDb();
@@ -50,7 +47,7 @@ class _HomePage extends State<HomePage> {
   ListView createListView() {
 
     return ListView.builder(
-      itemCount: scanList.length,
+      itemCount: widget.scanList.length,
       itemBuilder: (BuildContext context, int index) {
 
         var color = Container(
@@ -58,7 +55,7 @@ class _HomePage extends State<HomePage> {
           height: 50,
           color: Colors.white,
         );
-        if (scanList[index].scan > 1) {
+        if (widget.scanList[index].scan > 1) {
           color = Container(
             width: 5,
             height: 50,
@@ -76,10 +73,10 @@ class _HomePage extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("SN: "+this.scanList[index].sn ),
-                    Text("SN2: "+this.scanList[index].sn2),
+                    Text("SN: "+this.widget.scanList[index].sn ),
+                    Text("SN2: "+this.widget.scanList[index].sn2),
                     Text(""),
-                    Text(this.scanList[index].updated_at),
+                    Text(this.widget.scanList[index].updated_at),
                   ],
                 ),
               )
@@ -97,28 +94,12 @@ class _HomePage extends State<HomePage> {
         body: SafeArea(
           child: Column(
             children: [
-              Container(
-                padding: EdgeInsets.all(20),
-                child: GFTextField(
-                  controller: _controllerSearch,
-                  keyboardType: TextInputType.text,
-                  onChanged: (String value){
-                    _refreshData(value);
-                  },
-                  autofocus: false,
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(18.0)),
-                  ),
-                ),
-              ),
 
               Row(
                 children: [
                   Expanded(child:
                     Container(
-                      padding: EdgeInsets.only(left: 20),
+                      padding: EdgeInsets.only(left: 20, top: 20),
                       child: GFTextField(
                         controller: _controllerScanManual,
                         keyboardType: TextInputType.text,
@@ -137,7 +118,7 @@ class _HomePage extends State<HomePage> {
                   TextButton(onPressed: (){
                     DbHelper.updateItem(2, _controllerScanManual.text.toString()).then((int value) {
                       if (value > 0) {
-                        _refreshData('');
+                        // _refreshData('');
                       }
                       debugPrint('update -> $value');
                     });
@@ -159,7 +140,7 @@ class _HomePage extends State<HomePage> {
                 _scanService.getScanList().then((value) {
 
                   Navigator.pop(context);
-                  _refreshData('');
+                  // _refreshData('');
                 }).onError((error, stackTrace) {
                   Navigator.pop(context);
                   const snackBar = SnackBar(
@@ -173,7 +154,7 @@ class _HomePage extends State<HomePage> {
                   child:
                   Container(
                     padding: EdgeInsets.all(10),
-                    child: scanList.isEmpty ? Column(
+                    child: widget.scanList.isEmpty ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text('No data.')
