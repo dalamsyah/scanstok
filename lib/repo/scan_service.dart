@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanService {
 
-  String url = 'http://192.168.56.1/scan_barcode_stok_api/public/scan';
-  // String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
+  // String url = 'http://192.168.56.1/scan_barcode_stok_api/public/scan';
+  String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
 
 
   List<ScanModel> listScan = [];

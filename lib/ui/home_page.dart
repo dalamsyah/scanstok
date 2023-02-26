@@ -9,7 +9,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
-  final List<ScanModel> scanList;
+  List<ScanModel> scanList;
 
   HomePage({ Key? key, required this.scanList}) : super(key: key);
 
@@ -87,6 +87,14 @@ class _HomePage extends State<HomePage> {
     );
   }
 
+  void _refreshData(String key) async {
+    final data = await DbHelper.getList(key);
+    setState(() {
+      widget.scanList.clear();
+      widget.scanList.addAll( data );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -118,9 +126,8 @@ class _HomePage extends State<HomePage> {
                   TextButton(onPressed: (){
                     DbHelper.updateItem(2, _controllerScanManual.text.toString()).then((int value) {
                       if (value > 0) {
-                        // _refreshData('');
+                        _refreshData('');
                       }
-                      debugPrint('update -> $value');
                     });
 
                   }, child: Text('Scan')),
@@ -134,21 +141,6 @@ class _HomePage extends State<HomePage> {
                     false,
                     ScanMode.DEFAULT);
               }, child: Text('Open Scanner')),
-
-              TextButton(onPressed: (){
-                showLoaderDialog(context);
-                _scanService.getScanList().then((value) {
-
-                  Navigator.pop(context);
-                  // _refreshData('');
-                }).onError((error, stackTrace) {
-                  Navigator.pop(context);
-                  const snackBar = SnackBar(
-                    content: Text('Failed get data.'),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                });
-              }, child: Text('Get Data')),
 
               Expanded(
                   child:

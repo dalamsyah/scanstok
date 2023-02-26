@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scanstock/helper/DBHelper.dart';
 import 'package:scanstock/model/m_scan.dart';
+import 'package:scanstock/repo/scan_service.dart';
 import 'package:scanstock/ui/home_page.dart';
 
 void main() {
@@ -16,6 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyApp extends State<MyApp> {
 
   bool _iSearch = false;
+  final _scanService = ScanService();
   final TextEditingController _controllerSearch = TextEditingController();
   List<ScanModel> scanList = [];
 
@@ -101,13 +103,51 @@ class _MyApp extends State<MyApp> {
                     _controllerSearch.text = '';
                   });
                 },
-                icon: const Icon(Icons.cancel))
+                icon: const Icon(Icons.cancel)),
+            PopupMenuButton(itemBuilder: (context) => [
+              PopupMenuItem(child: Text('Get Data'), onTap: (){
+                showLoaderDialog(context);
+                _scanService.getScanList().then((value) {
+                  Navigator.pop(context);
+                  _refreshData('');
+                }).onError((error, stackTrace) {
+                  Navigator.pop(context);
+                  const snackBar = SnackBar(
+                    content: Text('Failed get data.'),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                });
+              }),
+            ])
           ]
         ),
         body: HomePage(scanList: scanList),
       ),
     );
   }
+
+  showLoaderDialog(BuildContext context){
+    AlertDialog alert = AlertDialog(
+      content: Row(
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(
+            width: 10,
+          ),
+          Container(
+            child:Text(" Loading..." ),
+            padding: EdgeInsets.all(10),
+          ),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
+    );
+  }
+
 }
 
 class MyHomePage extends StatefulWidget {
