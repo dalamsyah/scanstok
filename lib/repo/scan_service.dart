@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanService {
 
-  // String url = 'http://192.168.56.1/scan_barcode_stok_api/public/scan';
-  String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
+  String url = 'http://192.168.56.1/scan_barcode_stok_api/public/scan';
+  // String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
 
 
   List<ScanModel> listScan = [];
@@ -45,15 +45,22 @@ class ScanService {
   }
 
   Future<String> postList(List<ScanModel> list) async {
+
+    List<ScanModel> arr = [];
+    for (ScanModel scanModel in list) {
+      ScanModel scan = ScanModel(scanModel.sn, scanModel.sn2, scanModel.scan);
+      arr.add(scan);
+    }
+
     final response = await http.post(Uri.parse(url), body: {
-      'list': jsonEncode(list),
+      'list': jsonEncode(arr),
     });
 
     if (response.statusCode == 200) {
 
       return 'Success send data';
     } else {
-      throw Exception('Failed to get status list.');
+      throw Exception('Failed to post list.');
     }
   }
 

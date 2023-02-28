@@ -154,6 +154,17 @@ class _HomePage extends State<HomePage> {
                     ) : createListView(),
                   ),
               ),
+
+              Container(
+                padding: EdgeInsets.all(10),
+                width: double.infinity,
+                child: ElevatedButton(
+                    onPressed: (){
+                      _scanService.postList(widget.scanList);
+                    },
+                    child: Text('Upload')
+                ),
+              )
             ],
           ),
         )

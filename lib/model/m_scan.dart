@@ -11,7 +11,7 @@ class ScanModel {
   String _updated_at = "";
 
   // konstruktor versi 1
-  ScanModel(this._sn, this._sn2);
+  ScanModel(this._sn, this._sn2, this._scan);
 
   // konstruktor versi 2: konversi dari Map ke Scan
   ScanModel.fromMap(Map<String, dynamic> map) {
