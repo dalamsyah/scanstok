@@ -6,7 +6,7 @@ class ScanModel {
   String _sn = "";
   String _sn2 = "";
   int _scan = 0;
-  String _upload = "false";
+  int _upload = 0;
   String _created_at = "";
   String _updated_at = "";
 
@@ -20,7 +20,7 @@ class ScanModel {
     this._sn = map['sn'];
     this._sn2 = map['sn2'];
     this._scan = map['scan'];
-    this._upload = map['upload'] ?? 'false';
+    this._upload = map['upload'];
     this._created_at = map['created_at'] ?? '-';
     this._updated_at = map['updated_at'] ?? '-';
   }
@@ -62,6 +62,12 @@ class ScanModel {
     map['created_at'] = _created_at;
     map['updated_at'] = _updated_at;
     return map;
+  }
+
+  List encondeToJson(List<ScanModel> list) {
+    List jsonList = [];
+    list.map((item) => jsonList.add(item.toMap())).toList();
+    return jsonList;
   }
 
 }

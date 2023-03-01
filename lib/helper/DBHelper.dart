@@ -16,7 +16,7 @@ class DbHelper {
         sn TEXT,
         sn2 TEXT,
         scan INTEGER,
-        upload TEXT,
+        upload INTEGER,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP
       )
@@ -65,7 +65,7 @@ class DbHelper {
 
   static Future<List<ScanModel>> getList(String key) async {
     Database db = await DbHelper.db();
-    var contactMapList = await db.query('scanstock', where: "sn LIKE ? AND scan > ?", whereArgs: ['%$key%', '0'], orderBy: "id");
+    var contactMapList = await db.query('scanstock', where: "sn LIKE ?", whereArgs: ['%$key%'], orderBy: "id");
 
     int count = contactMapList.length;
     List<ScanModel> contactList = [];
@@ -85,8 +85,12 @@ class DbHelper {
       'updated_at': DateTime.now().toString()
     };
 
-    final result =
-    await db.update('scanstock', data, where: "sn = ?", whereArgs: [snOrSn2]);
+    var cek = await db.query('scanstock', where: "sn = ? OR sn2 = ?", whereArgs: [snOrSn2, snOrSn2]);
+    if (cek.isEmpty) {
+      return -1;
+    }
+
+    final result = await db.update('scanstock', data, where: "sn = ? OR sn2 = ?", whereArgs: [snOrSn2, snOrSn2]);
     return result;
   }
 

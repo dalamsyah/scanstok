@@ -46,22 +46,23 @@ class ScanService {
 
   Future<String> postList(List<ScanModel> list) async {
 
-    List<ScanModel> arr = [];
-    for (ScanModel scanModel in list) {
-      ScanModel scan = ScanModel(scanModel.sn, scanModel.sn2, scanModel.scan);
-      arr.add(scan);
-    }
-
     final response = await http.post(Uri.parse(url), body: {
-      'list': jsonEncode(arr),
+      'list': jsonEncode(encondeToJson(list)),
     });
 
-    if (response.statusCode == 200) {
-
-      return 'Success send data';
+    if (response.statusCode == 201) {
+      return 'Success update data';
+    } else if (response.statusCode == 200) {
+      return 'Failed update all data';
     } else {
       throw Exception('Failed to post list.');
     }
+  }
+
+  List encondeToJson(List<ScanModel> list) {
+    List jsonList = [];
+    list.map((item) => jsonList.add(item.toMap())).toList();
+    return jsonList;
   }
 
 }

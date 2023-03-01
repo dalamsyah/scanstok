@@ -124,9 +124,13 @@ class _HomePage extends State<HomePage> {
                     )
                   ),
                   TextButton(onPressed: (){
+                    //search
+
                     DbHelper.updateItem(2, _controllerScanManual.text.toString()).then((int value) {
                       if (value > 0) {
                         _refreshData('');
+                      } else {
+                        showAlertDialog(context, 'Data not found.');
                       }
                     });
 
@@ -160,7 +164,20 @@ class _HomePage extends State<HomePage> {
                 width: double.infinity,
                 child: ElevatedButton(
                     onPressed: (){
-                      _scanService.postList(widget.scanList);
+                      showLoaderDialog(context);
+                      _scanService.postList(widget.scanList).then((value) {
+                        Navigator.pop(context);
+                        SnackBar snackBar = SnackBar(
+                          content: Text(value),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }).onError((error, stackTrace) {
+                        Navigator.pop(context);
+                        const snackBar = SnackBar(
+                          content: Text('Failed upload data.'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      });
                     },
                     child: Text('Upload')
                 ),
@@ -170,6 +187,34 @@ class _HomePage extends State<HomePage> {
         )
     );
 
+  }
+
+  showAlertDialog(BuildContext context, String msg) {
+
+    // set up the button
+    Widget okButton = TextButton(
+      child: const Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Message"),
+      content: Text(msg),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   showLoaderDialog(BuildContext context){
