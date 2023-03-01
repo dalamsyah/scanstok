@@ -30,7 +30,6 @@ class _HomePage extends State<HomePage> {
   }
 
 
-
   // void updateListView() {
   //   final Future<Database> dbFuture = dbHelper.initDb();
   //   dbFuture.then((database) {
@@ -126,7 +125,7 @@ class _HomePage extends State<HomePage> {
                   TextButton(onPressed: (){
                     //search
 
-                    DbHelper.updateItem(2, _controllerScanManual.text.toString()).then((int value) {
+                    DbHelper.updateItem(1, _controllerScanManual.text.toString()).then((int value) {
                       if (value > 0) {
                         _refreshData('');
                       } else {
@@ -139,11 +138,21 @@ class _HomePage extends State<HomePage> {
               ),
 
               TextButton(onPressed: () async {
-                await FlutterBarcodeScanner.scanBarcode(
+                String result = await FlutterBarcodeScanner.scanBarcode(
                     '#ff6666',
                     'Batal',
                     false,
                     ScanMode.DEFAULT);
+
+                DbHelper.updateItem(1, result).then((int value) {
+                  if (value > 0) {
+                    _refreshData('');
+                  } else {
+                    showAlertDialog(context, 'Data not found.');
+                  }
+                });
+
+                print('result scan -> '+result);
               }, child: Text('Open Scanner')),
 
               Expanded(
@@ -165,7 +174,7 @@ class _HomePage extends State<HomePage> {
                 child: ElevatedButton(
                     onPressed: (){
                       showLoaderDialog(context);
-                      _scanService.postList(widget.scanList).then((value) {
+                      _scanService.postList().then((value) {
                         Navigator.pop(context);
                         SnackBar snackBar = SnackBar(
                           content: Text(value),
@@ -187,7 +196,9 @@ class _HomePage extends State<HomePage> {
         )
     );
 
+
   }
+
 
   showAlertDialog(BuildContext context, String msg) {
 

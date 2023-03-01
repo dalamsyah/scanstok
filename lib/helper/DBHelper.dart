@@ -65,7 +65,19 @@ class DbHelper {
 
   static Future<List<ScanModel>> getList(String key) async {
     Database db = await DbHelper.db();
-    var contactMapList = await db.query('scanstock', where: "sn LIKE ?", whereArgs: ['%$key%'], orderBy: "id");
+    var contactMapList = await db.query('scanstock', where: "sn LIKE ?", whereArgs: ['%$key%'], orderBy: "updated_at");
+
+    int count = contactMapList.length;
+    List<ScanModel> contactList = [];
+    for (int i=0; i<count; i++) {
+      contactList.add(ScanModel.fromMap(contactMapList[i]));
+    }
+    return contactList;
+  }
+
+  static Future<List<ScanModel>> getListToUpload() async {
+    Database db = await DbHelper.db();
+    var contactMapList = await db.query('scanstock', where: "scan > ?", whereArgs: [0]);
 
     int count = contactMapList.length;
     List<ScanModel> contactList = [];
