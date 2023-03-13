@@ -38,6 +38,11 @@ class ScanModel {
     this._item_code = map['item_code'];
     this._sn = map['sn'];
     this._sn2 = map['sn2'];
+    this._loc = map['loc'];
+    this._zone = map['zone'];
+    this._area = map['area'];
+    this._rack = map['rack'];
+    this._bin = map['bin'];
   }
 
 
@@ -45,6 +50,11 @@ class ScanModel {
   String get id => _idstokcount;
   String get sn => _sn;
   String get sn2 => _sn2;
+  String get loc => _loc;
+  String get zone => _zone;
+  String get area => _area;
+  String get rack => _rack;
+  String get bin => _bin;
   int get scan => _scan;
   String get created_at => _created_at ?? '-';
   String get updated_at => _updated_at ?? '-';
@@ -58,6 +68,10 @@ class ScanModel {
     sn2 = value;
   }
 
+  set loc(String value) {
+    loc = value;
+  }
+
   set created_at(String value) {
     created_at = value;
   }
@@ -69,8 +83,8 @@ class ScanModel {
   // konversi dari Scan ke Map
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = Map<String, dynamic>();
-    map['idstokcount'] = this._idstokcount;
-    map['item_code'] = this._item_code;
+    map['idstokcount'] = _idstokcount;
+    map['item_code'] = _item_code;
     map['sn'] = _sn;
     map['sn2'] = _sn2;
     map['loc'] = _loc;

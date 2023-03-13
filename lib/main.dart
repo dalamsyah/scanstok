@@ -253,10 +253,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 _scanService.getScanList().then((value) {
                   Navigator.pop(context);
                   _refreshData('');
+
+                  const snackBar = SnackBar(
+                    content: Text('Success get data'),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }).onError((error, stackTrace) {
                   Navigator.pop(context);
                   const snackBar = SnackBar(
-                    content: Text('Failed get data.'),
+                    content: Text('Failed get data'),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 });

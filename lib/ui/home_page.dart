@@ -63,6 +63,7 @@ class _HomePage extends State<HomePage> {
                   children: [
                     Text("SN: "+this.widget.scanList[index].sn ),
                     Text("SN2: "+this.widget.scanList[index].sn2),
+                    Text("Rack: ${widget.scanList[index].loc} - ${widget.scanList[index].zone} - ${widget.scanList[index].area} - ${widget.scanList[index].bin}"),
                     Text(""),
                     Text(this.widget.scanList[index].updated_at),
                   ],
@@ -114,7 +115,7 @@ class _HomePage extends State<HomePage> {
                   TextButton(onPressed: (){
                     //search
 
-                    DbHelper.updateItem(2, _controllerScanManual.text.toString()).then((int value) {
+                    DbHelper.updateItem(1, _controllerScanManual.text.toString()).then((int value) {
                       if (value > 0) {
                         _refreshData('');
                       } else {
@@ -135,11 +136,20 @@ class _HomePage extends State<HomePage> {
                   Container(
                     padding: EdgeInsets.all(10),
                     child: OutlinedButton(onPressed: () async {
-                      await FlutterBarcodeScanner.scanBarcode(
+                      String result = await FlutterBarcodeScanner.scanBarcode(
                           '#ff6666',
                           'Batal',
                           false,
                           ScanMode.DEFAULT);
+
+                      DbHelper.updateItem(1, result ).then((int value) {
+                        if (value > 0) {
+                          _refreshData('');
+                        } else {
+                          showAlertDialog(context, 'Data not found.');
+                        }
+                      });
+
                     }, child: Text('Scan Item')),
                   ),
                 ],
