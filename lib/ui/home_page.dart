@@ -25,26 +25,12 @@ class _HomePage extends State<HomePage> {
   final TextEditingController _controllerScanManual = TextEditingController();
   final TextEditingController _controllerUrl = TextEditingController();
   int count = 0;
+  String currentRack = "WH2-A-B-C-D";
 
   @override
   void initState() {
     super.initState();
   }
-
-
-
-  // void updateListView() {
-  //   final Future<Database> dbFuture = dbHelper.initDb();
-  //   dbFuture.then((database) {
-  //     Future<List<ScanModel>> contactListFuture = dbHelper.get();
-  //     contactListFuture.then((list) {
-  //       setState(() {
-  //         this.scanList = list;
-  //         this.count = list.length;
-  //       });
-  //     });
-  //   });
-  // }
 
   ListView createListView() {
 
@@ -140,13 +126,34 @@ class _HomePage extends State<HomePage> {
                 ],
               ),
 
-              TextButton(onPressed: () async {
-                await FlutterBarcodeScanner.scanBarcode(
-                    '#ff6666',
-                    'Batal',
-                    false,
-                    ScanMode.DEFAULT);
-              }, child: Text('Open Scanner')),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 20),
+                    child: OutlinedButton(onPressed: (){}, child: Text('Scan Rack')),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: OutlinedButton(onPressed: () async {
+                      await FlutterBarcodeScanner.scanBarcode(
+                          '#ff6666',
+                          'Batal',
+                          false,
+                          ScanMode.DEFAULT);
+                    }, child: Text('Scan Item')),
+                  ),
+                ],
+              ),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Text('Current Rack: $currentRack'),
+                  )
+                ],
+              ),
 
               Expanded(
                   child:

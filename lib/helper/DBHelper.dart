@@ -11,10 +11,15 @@ class DbHelper {
   static Future<void> createTables(sql.Database database) async {
     await database.execute("""CREATE TABLE scanstock (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        idstokcount INTEGER,
+        idstokcount TEXT,
         item_code TEXT,
         sn TEXT,
         sn2 TEXT,
+        loc TEXT,
+        zone TEXT,
+        area TEXT,
+        rack TEXT,
+        bin TEXT,
         scan INTEGER,
         upload INTEGER,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

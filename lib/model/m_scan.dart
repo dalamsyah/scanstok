@@ -1,32 +1,48 @@
 
 
 class ScanModel {
-  int _idstokcount = 0;
+  String _idstokcount = "";
   String _item_code = "";
   String _sn = "";
   String _sn2 = "";
+  String _loc = "";
+  String _zone = "";
+  String _area = "";
+  String _rack = "";
+  String _bin = "";
   int _scan = 0;
   int _upload = 0;
   String? _created_at = "";
   String? _updated_at = "";
 
-  // konstruktor versi 1
   ScanModel(this._sn, this._sn2, this._scan);
 
-  // konstruktor versi 2: konversi dari Map ke Scan
   ScanModel.fromMap(Map<String, dynamic> map) {
     this._idstokcount = map['idstokcount'];
     this._item_code = map['item_code'];
     this._sn = map['sn'];
     this._sn2 = map['sn2'];
+    this._loc = map['loc'];
+    this._zone = map['zone'];
+    this._area = map['area'];
+    this._rack = map['rack'];
+    this._bin = map['bin'];
     this._scan = map['scan'];
     this._upload = map['upload'];
     this._created_at = map['created_at'];
     this._updated_at = map['updated_at'];
   }
-  //getter dan setter (mengambil dan mengisi data kedalam object)
+
+  ScanModel.fromMap2(Map<String, dynamic> map) {
+    this._idstokcount = map['idstokcount'];
+    this._item_code = map['item_code'];
+    this._sn = map['sn'];
+    this._sn2 = map['sn2'];
+  }
+
+
   // getter
-  int get id => _idstokcount;
+  String get id => _idstokcount;
   String get sn => _sn;
   String get sn2 => _sn2;
   int get scan => _scan;
@@ -57,6 +73,11 @@ class ScanModel {
     map['item_code'] = this._item_code;
     map['sn'] = _sn;
     map['sn2'] = _sn2;
+    map['loc'] = _loc;
+    map['zone'] = _zone;
+    map['area'] = _area;
+    map['rack'] = _rack;
+    map['bin'] = _bin;
     map['scan'] = _scan;
     map['upload'] = _upload;
     map['created_at'] = _created_at;

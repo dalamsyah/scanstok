@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanService {
 
-  String baseUrl = 'http://192.168.56.2/scan_barcode_stok_api/public/scan';
+  String baseUrl = 'http://192.168.56.1/scanbarcode/api.php';
   // String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
 
 
@@ -28,7 +28,7 @@ class ScanService {
       final data = jsonDecode(response.body);
       var list = data['data'] as List;
 
-      listScan = list.map((data) => ScanModel.fromMap(data) ).toList();
+      listScan = list.map((data) => ScanModel.fromMap2(data) ).toList();
 
       DbHelper.delete();
       listScan.forEach((element) {
@@ -54,7 +54,7 @@ class ScanService {
       'list': jsonEncode(encondeToJson(list)),
     });
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return 'Success update data';
     } else if (response.statusCode == 200) {
       return 'Failed update all data';
