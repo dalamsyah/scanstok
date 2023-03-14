@@ -92,13 +92,26 @@ class DbHelper {
     return contactList;
   }
 
+  static Future<int> checkPendingUpload() async {
+    Database db = await DbHelper.db();
+    var contactMapList = await db.query('scanstock', where: "upload = ?", whereArgs: [0]);
+    return contactMapList.length;
+  }
+
   // Update an item by id
   static Future<int> updateItem(
-      int scan, String snOrSn2) async {
+      int scan, String snOrSn2, String rackArr) async {
     final db = await DbHelper.db();
+    List<String> rack = rackArr.split("-");
 
     final data = {
       'scan': scan,
+      'loc': rack[0],
+      'zone': rack[1],
+      'area': rack[2],
+      'rack': rack[3],
+      'bin': rack[4],
+      'upload': 0,
       'updated_at': DateTime.now().toString()
     };
 

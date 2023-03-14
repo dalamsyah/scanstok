@@ -11,7 +11,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
   List<ScanModel> scanList;
-
+  String currentRack = "-";
   HomePage({ Key? key, required this.scanList}) : super(key: key);
 
   @override
@@ -25,11 +25,19 @@ class _HomePage extends State<HomePage> {
   final TextEditingController _controllerScanManual = TextEditingController();
   final TextEditingController _controllerUrl = TextEditingController();
   int count = 0;
-  String currentRack = "WH2-A-B-C-D";
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Widget rack(int index) {
+
+    if (widget.scanList[index].loc == "") {
+      return const Text("Rack: -");
+    }
+
+    return Text("Rack: ${widget.scanList[index].loc} - ${widget.scanList[index].zone} - ${widget.scanList[index].area} - ${widget.scanList[index].bin}");
   }
 
   ListView createListView() {
@@ -63,7 +71,7 @@ class _HomePage extends State<HomePage> {
                   children: [
                     Text("SN: "+this.widget.scanList[index].sn ),
                     Text("SN2: "+this.widget.scanList[index].sn2),
-                    Text("Rack: ${widget.scanList[index].loc} - ${widget.scanList[index].zone} - ${widget.scanList[index].area} - ${widget.scanList[index].bin}"),
+                    rack(index),
                     Text(""),
                     Text(this.widget.scanList[index].updated_at),
                   ],
@@ -82,6 +90,26 @@ class _HomePage extends State<HomePage> {
       widget.scanList.clear();
       widget.scanList.addAll( data );
     });
+  }
+
+  void validateScan() async {
+    if (widget.currentRack == "-") {
+      showAlertDialog(context, 'Please Scan Rack first!');
+    } else {
+      String result = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666',
+          'Batal',
+          false,
+          ScanMode.DEFAULT);
+
+      DbHelper.updateItem(1, result, widget.currentRack ).then((int value) {
+        if (value > 0) {
+          _refreshData('');
+        } else {
+          showAlertDialog(context, 'Data not found.');
+        }
+      });
+    }
   }
 
   @override
@@ -114,14 +142,7 @@ class _HomePage extends State<HomePage> {
                   ),
                   TextButton(onPressed: (){
                     //search
-
-                    DbHelper.updateItem(1, _controllerScanManual.text.toString()).then((int value) {
-                      if (value > 0) {
-                        _refreshData('');
-                      } else {
-                        showAlertDialog(context, 'Data not found.');
-                      }
-                    });
+                    validateScan();
 
                   }, child: Text('Scan')),
                 ],
@@ -131,24 +152,24 @@ class _HomePage extends State<HomePage> {
                 children: [
                   Container(
                     padding: EdgeInsets.only(left: 20),
-                    child: OutlinedButton(onPressed: (){}, child: Text('Scan Rack')),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(10),
                     child: OutlinedButton(onPressed: () async {
                       String result = await FlutterBarcodeScanner.scanBarcode(
                           '#ff6666',
                           'Batal',
                           false,
                           ScanMode.DEFAULT);
-
-                      DbHelper.updateItem(1, result ).then((int value) {
-                        if (value > 0) {
-                          _refreshData('');
-                        } else {
-                          showAlertDialog(context, 'Data not found.');
-                        }
+                      setState(() {
+                        widget.currentRack = result;
                       });
+
+                      print(result);
+                    }, child: Text('Scan Rack')),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: OutlinedButton(onPressed: () async {
+
+                      validateScan();
 
                     }, child: Text('Scan Item')),
                   ),
@@ -160,7 +181,7 @@ class _HomePage extends State<HomePage> {
                 children: [
                   Container(
                     padding: EdgeInsets.only(left: 20),
-                    child: Text('Current Rack: $currentRack'),
+                    child: Text('Current Rack: ${widget.currentRack}'),
                   )
                 ],
               ),

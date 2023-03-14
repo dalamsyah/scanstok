@@ -38,11 +38,11 @@ class ScanModel {
     this._item_code = map['item_code'];
     this._sn = map['sn'];
     this._sn2 = map['sn2'];
-    this._loc = map['loc'];
-    this._zone = map['zone'];
-    this._area = map['area'];
-    this._rack = map['rack'];
-    this._bin = map['bin'];
+    this._loc = map['loc'] ?? "";
+    this._zone = map['zone'] ?? "";
+    this._area = map['area'] ?? "";
+    this._rack = map['rack'] ?? "";
+    this._bin = map['bin'] ?? "";
   }
 
 

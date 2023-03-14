@@ -7,7 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanService {
 
-  String baseUrl = 'http://192.168.56.1/scanbarcode/api.php';
+  // String baseUrl = 'http://192.168.56.1/scanbarcode/api.php';
+  String baseUrl = 'http://192.168.0.102/scan_barcode_stok_api/api_stock/api.php';
   // String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
 
 

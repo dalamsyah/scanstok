@@ -194,6 +194,34 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  showAlertDialog(BuildContext context, String msg) {
+
+    // set up the button
+    Widget okButton = TextButton(
+      child: const Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Message"),
+      content: Text(msg),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -245,26 +273,32 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
                 icon: const Icon(Icons.cancel)),
-            PopupMenuButton(onSelected: (result) {
+            PopupMenuButton(onSelected: (result) async {
 
               if (result == 0) {
-                // Navigator.pop(context);
-                showLoaderDialog(context);
-                _scanService.getScanList().then((value) {
-                  Navigator.pop(context);
-                  _refreshData('');
+                DbHelper.checkPendingUpload().then((check) {
+                  if (check > 0) {
+                    showAlertDialog(context, 'You have pending upload scan');
+                  } else {
+                    showLoaderDialog(context);
+                    _scanService.getScanList().then((value) {
+                      Navigator.pop(context);
+                      _refreshData('');
 
-                  const snackBar = SnackBar(
-                    content: Text('Success get data'),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                }).onError((error, stackTrace) {
-                  Navigator.pop(context);
-                  const snackBar = SnackBar(
-                    content: Text('Failed get data'),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      const snackBar = SnackBar(
+                        content: Text('Success get data'),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }).onError((error, stackTrace) {
+                      Navigator.pop(context);
+                      const snackBar = SnackBar(
+                        content: Text('Failed get data'),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    });
+                  }
                 });
+
               }else if (result == 1) {
                 showSettingURLDialog(context);
               } else if (result == 2) {
