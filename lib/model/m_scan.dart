@@ -48,6 +48,7 @@ class ScanModel {
 
   // getter
   String get id => _idstokcount;
+  String get item_code => _item_code;
   String get sn => _sn;
   String get sn2 => _sn2;
   String get loc => _loc;
@@ -56,6 +57,7 @@ class ScanModel {
   String get rack => _rack;
   String get bin => _bin;
   int get scan => _scan;
+  int get upload => _upload;
   String get created_at => _created_at ?? '-';
   String get updated_at => _updated_at ?? '-';
 

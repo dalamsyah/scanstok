@@ -124,6 +124,18 @@ class DbHelper {
     return result;
   }
 
+  static Future<int> updateStatusUpload(
+      String idstokcount) async {
+    final db = await DbHelper.db();
+
+    final data = {
+      'upload': 1,
+    };
+
+    final result = await db.update('scanstock', data, where: "idstokcount = ?", whereArgs: [idstokcount]);
+    return result;
+  }
+
   // Delete
   static Future<void> deleteItem(int id) async {
     final db = await DbHelper.db();
@@ -133,6 +145,7 @@ class DbHelper {
       debugPrint("Something went wrong when deleting an item: $err");
     }
   }
+
 
   static Future<void> delete() async {
     final db = await DbHelper.db();

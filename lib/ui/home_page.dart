@@ -69,11 +69,12 @@ class _HomePage extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("SN: "+this.widget.scanList[index].sn ),
-                    Text("SN2: "+this.widget.scanList[index].sn2),
+                    Text("SN: ${widget.scanList[index].sn}" ),
+                    Text("SN2: ${widget.scanList[index].sn2}"),
+                    Text("Upload: ${widget.scanList[index].upload}"),
                     rack(index),
                     Text(""),
-                    Text(this.widget.scanList[index].updated_at),
+                    Text(widget.scanList[index].updated_at),
                   ],
                 ),
               )
@@ -206,19 +207,27 @@ class _HomePage extends State<HomePage> {
                     onPressed: (){
                       // Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingUrlPage() ));
                       showLoaderDialog(context);
-                      _scanService.postList(widget.scanList).then((value) {
-                        Navigator.pop(context);
-                        SnackBar snackBar = SnackBar(
-                          content: Text(value),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }).onError((error, stackTrace) {
-                        Navigator.pop(context);
-                        const snackBar = SnackBar(
-                          content: Text('Failed upload data.'),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                      DbHelper.getListToUpload().then((value) {
+                        _scanService.postList(value).then((value) {
+
+                          _refreshData('');
+                          Navigator.pop(context);
+
+                          SnackBar snackBar = SnackBar(
+                            content: Text(value),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                        }).onError((error, stackTrace) {
+                          Navigator.pop(context);
+                          const snackBar = SnackBar(
+                            content: Text('Failed upload data.'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        });
                       });
+
                     },
                     child: Text('Upload')
                 ),
