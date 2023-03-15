@@ -94,7 +94,7 @@ class DbHelper {
 
   static Future<int> checkPendingUpload() async {
     Database db = await DbHelper.db();
-    var contactMapList = await db.query('scanstock', where: "upload = ?", whereArgs: [0]);
+    var contactMapList = await db.query('scanstock', where: "upload = ? AND scan = ?", whereArgs: [0, 1]);
     return contactMapList.length;
   }
 
