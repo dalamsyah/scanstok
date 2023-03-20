@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanService {
 
-  String baseUrl = 'https://portal.tpi-mexico.com/scanbarcode/api.php';
-  // String baseUrl = 'http://192.168.0.102/scan_barcode_stok_api/api_stock/api.php';
+  // String baseUrl = 'https://portal.tpi-mexico.com/scanbarcode/apiv2.php';
+  String baseUrl = 'http://192.168.56.1/scanbarcode/apiv2.php';
   // String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
 
 
@@ -63,6 +63,41 @@ class ScanService {
       if (result.isNotEmpty) {
         for (ScanModel scanModel in result) {
           DbHelper.updateStatusUpload(scanModel.id);
+        }
+      }
+
+      return 'Success update data';
+    }
+    // else if (response.statusCode == 200) {
+    //   return 'Failed update all data';
+    // }
+    else {
+      throw Exception('Failed to post list.');
+    }
+  }
+
+  Future<String> postAndFetch(String barcode, String loc, String zone, String area, String rack, String bin) async {
+
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+
+    String url = localStorage.getString("url") ?? baseUrl;
+    final response = await http.post(Uri.parse(url), body: {
+      'barcode': barcode,
+      'loc': loc,
+      'zone': zone,
+      'area': area,
+      'rack': rack,
+      'bin': bin,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      var list = data['data'] as List;
+      List<ScanModel> result = list.map((data) => ScanModel.fromMap2(data) ).toList();
+
+      if (result.isNotEmpty) {
+        for (ScanModel scanModel in result) {
+          DbHelper.createItem(scanModel);
         }
       }
 

@@ -274,32 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 icon: const Icon(Icons.cancel)),
             PopupMenuButton(onSelected: (result) async {
-
-              if (result == 0) {
-                DbHelper.checkPendingUpload().then((check) {
-                  if (check > 0) {
-                    showAlertDialog(context, 'You have pending upload scan');
-                  } else {
-                    showLoaderDialog(context);
-                    _scanService.getScanList().then((value) {
-                      Navigator.pop(context);
-                      _refreshData('');
-
-                      const snackBar = SnackBar(
-                        content: Text('Success get data'),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }).onError((error, stackTrace) {
-                      Navigator.pop(context);
-                      const snackBar = SnackBar(
-                        content: Text('Failed get data'),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    });
-                  }
-                });
-
-              }else if (result == 1) {
+              if (result == 1) {
                 showSettingURLDialog(context);
               } else if (result == 2) {
                 // showLoaderDialog(context);
@@ -307,9 +282,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 showLoaderDialog(context);
               }
             }, itemBuilder: (context) => [
-              PopupMenuItem(child: Text('Get Data'), value: 0, onTap: (){
-
-              }),
               PopupMenuItem(child: Text('Setting URL'), value: 1, onTap: (){
 
               }),

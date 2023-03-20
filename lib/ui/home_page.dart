@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:getwidget/components/text_field/gf_text_field.dart';
 import 'package:scanstock/helper/DBHelper.dart';
 import 'package:scanstock/model/m_scan.dart';
@@ -97,19 +98,29 @@ class _HomePage extends State<HomePage> {
     if (widget.currentRack == "-") {
       showAlertDialog(context, 'Please Scan Rack first!');
     } else {
-      String result = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666',
-          'Batal',
-          false,
-          ScanMode.DEFAULT);
+      try {
 
-      DbHelper.updateItem(1, result, widget.currentRack ).then((int value) {
-        if (value > 0) {
+        List<String> list = widget.currentRack.split("-");
+        String loc = '';
+        String zone = list[0];
+        String area = list[1];
+        String rack = list[2];
+        String bin = list[3];
+
+        showLoaderDialog(context);
+        _scanService.postAndFetch(_controllerScanManual.text, loc, zone, area, rack, bin).then((value) {
+          Navigator.pop(context);
           _refreshData('');
-        } else {
-          showAlertDialog(context, 'Data not found.');
-        }
-      });
+        }).onError((error, stackTrace) {
+          Navigator.pop(context);
+          const snackBar = SnackBar(
+            content: Text('Failed scan item.'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
+      } on Exception catch (_) {
+        showAlertDialog(context, 'Format Current Rack wrong!');
+      }
     }
   }
 
@@ -160,10 +171,11 @@ class _HomePage extends State<HomePage> {
                           false,
                           ScanMode.DEFAULT);
                       setState(() {
+                        result = result.replaceAll("]C1", "");
                         widget.currentRack = result;
                       });
 
-                      print(result);
+                      print("print->"+result);
                     }, child: Text('Scan Rack')),
                   ),
                   Container(
@@ -352,4 +364,8 @@ class _HomePage extends State<HomePage> {
 
   }
 
+}
+
+extension E on String {
+  String lastChars(int n) => substring(length - n);
 }
