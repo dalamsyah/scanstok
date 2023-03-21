@@ -34,11 +34,11 @@ class _HomePage extends State<HomePage> {
 
   Widget rack(int index) {
 
-    if (widget.scanList[index].loc == "") {
+    if (widget.scanList[index].zone == "") {
       return const Text("Rack: -");
     }
 
-    return Text("Rack: ${widget.scanList[index].loc} - ${widget.scanList[index].zone} - ${widget.scanList[index].area} - ${widget.scanList[index].bin}");
+    return Text("Rack: ${widget.scanList[index].zone} - ${widget.scanList[index].area} - ${widget.scanList[index].bin}");
   }
 
   ListView createListView() {
@@ -72,7 +72,7 @@ class _HomePage extends State<HomePage> {
                   children: [
                     Text("SN: ${widget.scanList[index].sn}" ),
                     Text("SN2: ${widget.scanList[index].sn2}"),
-                    Text("Upload: ${widget.scanList[index].upload}"),
+                    // Text("Upload: ${widget.scanList[index].upload}"),
                     rack(index),
                     Text(""),
                     Text(widget.scanList[index].updated_at),
@@ -94,7 +94,7 @@ class _HomePage extends State<HomePage> {
     });
   }
 
-  void validateScan() async {
+  void validateScan(String barcode) async {
     if (widget.currentRack == "-") {
       showAlertDialog(context, 'Please Scan Rack first!');
     } else {
@@ -108,7 +108,7 @@ class _HomePage extends State<HomePage> {
         String bin = list[3];
 
         showLoaderDialog(context);
-        _scanService.postAndFetch(_controllerScanManual.text, loc, zone, area, rack, bin).then((value) {
+        _scanService.postAndFetch(barcode, loc, zone, area, rack, bin).then((value) {
           Navigator.pop(context);
           _refreshData('');
         }).onError((error, stackTrace) {
@@ -154,7 +154,7 @@ class _HomePage extends State<HomePage> {
                   ),
                   TextButton(onPressed: (){
                     //search
-                    validateScan();
+                    validateScan(_controllerScanManual.text);
 
                   }, child: Text('Scan')),
                 ],
@@ -182,7 +182,16 @@ class _HomePage extends State<HomePage> {
                     padding: EdgeInsets.all(10),
                     child: OutlinedButton(onPressed: () async {
 
-                      validateScan();
+                      String result = await FlutterBarcodeScanner.scanBarcode(
+                          '#ff6666',
+                          'Batal',
+                          false,
+                          ScanMode.DEFAULT);
+
+                      result = result.replaceAll("]C1", "");
+                      print("print item->"+result);
+                      validateScan(result);
+
 
                     }, child: Text('Scan Item')),
                   ),
@@ -212,38 +221,6 @@ class _HomePage extends State<HomePage> {
                   ),
               ),
 
-              Container(
-                padding: EdgeInsets.all(10),
-                width: double.infinity,
-                child: ElevatedButton(
-                    onPressed: (){
-                      // Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingUrlPage() ));
-                      showLoaderDialog(context);
-
-                      DbHelper.getListToUpload().then((value) {
-                        _scanService.postList(value).then((value) {
-
-                          _refreshData('');
-                          Navigator.pop(context);
-
-                          SnackBar snackBar = SnackBar(
-                            content: Text(value),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-                        }).onError((error, stackTrace) {
-                          Navigator.pop(context);
-                          const snackBar = SnackBar(
-                            content: Text('Failed upload data.'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        });
-                      });
-
-                    },
-                    child: Text('Upload')
-                ),
-              )
             ],
           ),
         )

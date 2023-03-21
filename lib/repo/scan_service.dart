@@ -7,8 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanService {
 
-  // String baseUrl = 'https://portal.tpi-mexico.com/scanbarcode/apiv2.php';
-  String baseUrl = 'http://192.168.56.1/scanbarcode/apiv2.php';
+  String baseUrl = 'https://portal.tpi-mexico.com/scanbarcode/api.php';
+  // String baseUrl = 'http://192.168.56.1/scanbarcode/apiv2.php';
   // String url = 'http://172.20.10.11/scan_barcode_stok_api/public/scan';
 
 
@@ -97,6 +97,7 @@ class ScanService {
 
       if (result.isNotEmpty) {
         for (ScanModel scanModel in result) {
+          DbHelper.deleteItemBySN(scanModel.sn);
           DbHelper.createItem(scanModel);
         }
       }

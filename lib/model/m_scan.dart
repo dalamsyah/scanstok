@@ -34,7 +34,7 @@ class ScanModel {
   }
 
   ScanModel.fromMap2(Map<String, dynamic> map) {
-    this._idstokcount = map['idstokcount'];
+    // this._idstokcount = map['idstokcount'];
     this._item_code = map['item_code'];
     this._sn = map['sn'];
     this._sn2 = map['sn2'];
@@ -43,6 +43,7 @@ class ScanModel {
     this._area = map['area'] ?? "";
     this._rack = map['rack'] ?? "";
     this._bin = map['bin'] ?? "";
+    this._updated_at = map['scan_datetime'] ?? "";
   }
 
 

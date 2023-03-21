@@ -146,6 +146,14 @@ class DbHelper {
     }
   }
 
+  static Future<void> deleteItemBySN(String sn) async {
+    final db = await DbHelper.db();
+    try {
+      await db.delete("scanstock", where: "sn = ?", whereArgs: [sn]);
+    } catch (err) {
+      debugPrint("Something went wrong when deleting an item: $err");
+    }
+  }
 
   static Future<void> delete() async {
     final db = await DbHelper.db();

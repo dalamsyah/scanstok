@@ -270,6 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     _iSearch = !_iSearch;
                     _controllerSearch.text = '';
+                    _refreshData('');
                   });
                 },
                 icon: const Icon(Icons.cancel)),
