@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:getwidget/components/text_field/gf_text_field.dart';
@@ -13,6 +15,8 @@ class HomePage extends StatefulWidget {
   static String tag = 'home-page';
   List<ScanModel> scanList;
   String currentRack = "-";
+  int currentInsert = 0;
+  int totalInsert = 0;
   HomePage({ Key? key, required this.scanList}) : super(key: key);
 
   @override
@@ -195,6 +199,34 @@ class _HomePage extends State<HomePage> {
 
                     }, child: Text('Scan Item')),
                   ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: OutlinedButton(onPressed: () async {
+
+                      final String response = await rootBundle.loadString('assets/db.json');
+                      final data = await jsonDecode(response);
+                      var list = data['data'] as List;
+
+                      List<ScanModel> listScan = list.map((data) => ScanModel.fromMap2(data) ).toList();
+                      setState((){
+                        widget.totalInsert = listScan.length;
+                      });
+
+                      print(listScan.length);
+                      DbHelper.delete();
+                      listScan.forEach((element) async {
+                        int insert = await DbHelper.createItem(element);
+                        if(insert > 0){
+                          setState((){
+                            widget.currentInsert += 1;
+                          });
+                        }
+
+                      });
+                      // _refreshData('');
+
+                    }, child: Text('Import Data1')),
+                  ),
                 ],
               ),
 
@@ -204,6 +236,15 @@ class _HomePage extends State<HomePage> {
                   Container(
                     padding: EdgeInsets.only(left: 20),
                     child: Text('Current Rack: ${widget.currentRack}'),
+                  )
+                ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Text('Import Data: ${widget.currentInsert} / ${widget.totalInsert}'),
                   )
                 ],
               ),
